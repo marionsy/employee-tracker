@@ -25,3 +25,6 @@ CREATE TABLE employee (
     REFERENCES employee(id)
     ON DELETE SET NULL
 );
+
+-- ALTER TABLE department
+-- ALTER INDEX department_id INVISIBLE;

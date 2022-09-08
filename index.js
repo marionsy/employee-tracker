@@ -13,10 +13,10 @@ const db = mysql.createConnection(
     console.log(`Connected to the employee_tracker_db database.`)
 )
 
-// Queries database
-// db.query('SELECCT * FROM employee', function (err, results) {
-//     console.log(results);
-// });
+db.connect(err => {
+    if (err) throw err;
+    init();
+})
 
 const init = () => {
     inquirer.prompt({
@@ -24,7 +24,7 @@ const init = () => {
         type: "list",
         message: "What would you like to do?",
         choices: [
-            "View All departments",
+            "View All Departments",
             "View All Roles",
             "View All Employees",
             "Add Department",
@@ -33,9 +33,54 @@ const init = () => {
             "Update Employee Role",
             "Quit"
         ]
-    }).then((answer) =>
-        answer.start(console.log("yay"))
-    )
+    }).then((answer) => {
+        switch (answer.start) {
+            case "View All Departments":
+                viewDepartments();
+                break;
+            case "View All Roles":
+                viewRoles();
+                break;
+            case "View All Employees":
+                viewEmployees();
+                break;
+            case "Add Department":
+                break;
+            case "Add Role":
+                break;
+            case "Add Employee":
+                break;
+            case "Update Employee Role":
+                break;
+            case "Quit":
+                db.end();
+                break;
+        }
+    });
 }
 
-init();
+// Function to view all departments
+viewDepartments = () => {
+    db.query('SELECT * FROM department', (err, results) => {
+        if (err) throw err;
+        console.table(results);
+        init();
+    });
+}
+
+// Function to view all roles
+viewRoles = () => {
+    db.query('SELECT * FROM role', (err, results) => {
+        if (err) throw err;
+        console.table(results);
+        init();
+    });
+}
+
+viewEmployees = () => {
+    db.query('SELECT * FROM employee', (err, results) => {
+        if (err) throw err;
+        console.table(results);
+        init();
+    });
+}

@@ -57,6 +57,7 @@ const init = () => {
                 break;
 
             case "Add Employee":
+                addEmployee();
                 break;
 
             case "Update Employee Role":
@@ -125,6 +126,8 @@ addDepartment = () => {
 
 // Function to add a role
 addRole = () => {
+
+    // Query to get all departments first 
     db.query('SELECT * FROM department', (err, results) => {
         if (err) throw err;
         const departments = results;
@@ -177,6 +180,101 @@ addRole = () => {
                 if (err) throw err;
                 console.log("Successfully added new role.");
                 init();
+            });
+        });
+    });
+}
+
+// Function to add an employee
+addEmployee = () => {
+
+    // Query to get all the roles
+    db.query('SELECT id, title FROM role', (err, results) => {
+        if (err) throw err;
+        const roles = results;
+        const roleNames = roles.map(role => role.title);
+
+        // Query to get all the employees
+        db.query('SELECT id, first_name, last_name FROM employee', (err, results) => {
+            if (err) throw err;
+            const employees = results;
+            let employeeNames = employees.map(employee => employee.first_name + ' ' + employee.last_name);
+
+            // Add none
+            employeeNames.push("No manager");
+
+            inquirer.prompt([
+                {
+                    name: "firstName",
+                    type: "input",
+                    message: "What is the employee's first name?",
+                    validate: (value) => {
+                        if (value) {
+                            return true;
+                        } else {
+                            console.log("Please enter the employee's first name.");
+                        }
+                    }
+                }, 
+                {
+                    name: "lastName",
+                    type: "input",
+                    message: "What is the employee's last name?",
+                    validate: (value) => {
+                        if (value) {
+                            return true;
+                        } else {
+                            console.log("Please enter the employee's last name.");
+                        }
+                    }
+                },
+                {
+                    name: "role",
+                    type: "list",
+                    message: "What is the employee's role?",
+                    choices: roleNames,
+                    validate: (value) => {
+                        if (value) {
+                            return true;
+                        } else {
+                            console.log("Please enter the employee's role.");
+                        }
+                    }
+                },
+                {
+                    name: "manager",
+                    type: "list",
+                    message: "Who is the employee's manager?",
+                    choices: employeeNames,
+                    validate: (value) => {
+                        if (value) {
+                            return true;
+                        } else {
+                            console.log("Please enter the employee's manager.");
+                        }
+                    }
+                }
+            ]).then(answer => {
+                const query = "INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)";
+                const roleId = roles
+                    .filter(role => role.title === answer.role)
+                    .map(role => role.id);
+
+                // Will see if user chooses a manger or not
+                let managerId;
+                if (answer.manager === "No manager") {
+                    managerId = null;
+                } else {
+                    managerId = employees
+                        .filter(employee => (employee.first_name + ' ' + employee.last_name) === answer.manager) 
+                        .map(manager => manager.id);
+                }
+
+                db.query(query, [answer.firstName, answer.lastName, roleId, managerId], (err, results) => {
+                    if (err) throw err;
+                    console.log("Successfully added new employee.");
+                    init();
+                });
             });
         });
     });

@@ -48,9 +48,11 @@ const init = () => {
                 break;
 
             case "Add Department":
+                addDepartment();
                 break;
 
             case "Add Role":
+                addRole();
                 break;
 
             case "Add Employee":
@@ -75,7 +77,7 @@ viewDepartments = () => {
     });
 }
 
-// Function to view all roles
+// Function to view all roles, uses a hard query to display results
 viewRoles = () => {
     const query = 'SELECT role.id, role.title, department.name as department, role.salary FROM role JOIN department ON department_id = department.id';
     db.query(query, (err, results) => {
@@ -85,13 +87,87 @@ viewRoles = () => {
     });
 }
 
-// Function to view all employees
+// Function to view all employees, uses a hard query to display results
 viewEmployees = () => {
     const query = 'SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name AS department, role.salary, concat(managers.first_name, \' \', managers.last_name) AS manager FROM employee JOIN role ON employee.role_id = role.id JOIN department ON role.department_id = department.id LEFT JOIN employee as managers ON managers.id = employee.manager_id;';
     db.query(query, (err, results) => {
         if (err) throw err;
         console.table(results);
         init();
+    });
+}
+
+// Function to add a department
+addDepartment = () => {
+    inquirer.prompt([
+        {
+            name: "department",
+            type: "input",
+            message: "What is the name of the department?",
+            validate: (value) => {
+                if (value) {
+                    return true;
+                } else {
+                    console.log("Please enter a department.");
+                }
+            }
+        }
+    ]).then(answer => {
+        const query = "INSERT INTO department (name) VALUES (?)";
+        db.query(query, answer.department, (err, results) => {
+            if (err) throw err;
+            console.log("Successfully added new department.");
+            init();
+        });
+    });
+}
+
+// Function to add a role
+addRole = () => {
+    inquirer.prompt([
+        {
+            name: "name",
+            type: "input",
+            message: "What is the name of the role?",
+            validate: (value) => {
+                if (value) {
+                    return true;
+                } else {
+                    console.log("Please enter a role.");
+                }
+            }
+        },
+        {
+            name: "salary",
+            type: "input",
+            message: "What is the salary for the role?",
+            validate: (value) => {
+                if (value) {
+                    return true;
+                } else {
+                    console.log("Please enter a salary for the role.");
+                }
+            }
+        },
+        {
+            name: "department",
+            type: "input",
+            message: "What is the department for the role?",
+            validate: (value) => {
+                if (value) {
+                    return true;
+                } else {
+                    console.log("Please enter a department for the role.");
+                }
+            }
+        }
+    ]).then(answer => {
+        const query = "INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)";
+        db.query(query, [answer.name, parseInt(answer.salary), parseInt(answer.department)], (err, results) => {
+            if (err) throw err;
+            console.log("Successfully added new role.");
+            init();
+        });
     });
 }
 

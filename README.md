@@ -1,0 +1,37 @@
+# Employee Tracker
+
+## Description
+
+  A command line application that enables users to view a company's employee database utilizing Node.js, Inquirer, and MYSQL.
+
+  ## Installation
+
+   * `npm install` to install required npm packages
+   *  Install Node.js to run the application
+   *  Install MYSQL to view and seed data
+
+  ## Usage
+
+   * The user must source the data first by logging into MYSQL and entering `SOURCE schema.sql` and `SOURCE seeds.sql`.
+   * Then the user will initialize the app by entering `node index.js`.
+   * Users will be prompted with choices to view departments, roles, and employees.
+   * Users will also be able to add a department, role, and employee.
+   * Users will then be able to update an employee role and display the newly added data in the tables.
+  
+  ## Screenshot
+  
+  This screenshot shows the the application, where users will select one of the following choices.
+  
+  <img width="365" alt="Screen Shot 2022-09-13 at 12 22 54 PM" src="https://user-images.githubusercontent.com/105673031/189991309-f2e0b56f-0a25-4b38-96eb-f0a39d2b06ee.png">
+
+  
+  ## Video Demo
+
+
+
+  ## Features
+  
+   * Node.js
+   * npm
+   * Javascript
+   * MYSQL

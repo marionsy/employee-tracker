@@ -22,12 +22,12 @@
   
   This screenshot shows the the application, where users will select one of the following choices.
   
-  <img width="365" alt="Screen Shot 2022-09-13 at 12 22 54 PM" src="https://user-images.githubusercontent.com/105673031/189991309-f2e0b56f-0a25-4b38-96eb-f0a39d2b06ee.png">
+  <img width="365" alt="Screen Shot 2022-09-13 at 12 22 54 PM" src="https://user-images.githubusercontent.com/105673031/189991309-     f2e0b56f-0a25-4b38-96eb-f0a39d2b06ee.png">
 
   
   ## Video Demo
 
-
+  https://user-images.githubusercontent.com/105673031/190000381-561b2f4a-739e-46a4-b38e-e67a12e0d1c6.mov
 
   ## Features
   

@@ -2,6 +2,13 @@
 const mysql = require('mysql2');
 const inquirer = require('inquirer');
 const cTable = require('console.table');
+const figlet = require("figlet");
+
+// Uses figlet to display intro message
+figlet("Employee \n \n Manager", (err, data) => {
+    if (err) throw err;
+    console.log(data);
+})
 
 // Connect to database
 const db = mysql.createConnection(

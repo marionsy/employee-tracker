@@ -31,10 +31,3 @@ CREATE TABLE employee (
     REFERENCES employee(id)
     ON DELETE SET NULL
 );
-
-
--- SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name AS department, role.salary, concat(managers.first_name, ' ', managers.last_name) AS manager
--- FROM employee
--- JOIN role ON employee.role_id = role.id
--- JOIN department ON role.department_id = department.id
--- LEFT JOIN employee as managers ON managers.id = employee.manager_id;

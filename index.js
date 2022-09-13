@@ -280,3 +280,19 @@ addEmployee = () => {
     });
 }
 
+updateRole = () => {
+    inquirer.prompt([
+        {
+            name: "update",
+            type: "input",
+            message: "Would you like to update an employee's role?",
+            validate: (value) => {
+                if (value) {
+                    return true;
+                } else {
+                    console.log("Please enter the new role.");
+                }
+            }
+        }
+    ]).then(answer)
+}

@@ -19,6 +19,7 @@ db.connect(err => {
     init();
 })
 
+// Function initialize app
 const init = () => {
     inquirer.prompt({
         name: "start",
@@ -61,6 +62,7 @@ const init = () => {
                 break;
 
             case "Update Employee Role":
+                updateRole();
                 break;
 
             case "Quit":
@@ -81,7 +83,7 @@ viewDepartments = () => {
 
 // Function to view all roles, uses a hard query to display results
 viewRoles = () => {
-    const query = 'SELECT role.id, role.title, department.name as department, role.salary FROM role JOIN department ON department_id = department.id';
+    const query = 'SELECT role.id, role.title, department.name AS department, role.salary FROM role JOIN department ON department_id = department.id';
     db.query(query, (err, results) => {
         if (err) throw err;
         console.table(results);
@@ -91,7 +93,7 @@ viewRoles = () => {
 
 // Function to view all employees, uses a hard query to display results
 viewEmployees = () => {
-    const query = 'SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name AS department, role.salary, concat(managers.first_name, \' \', managers.last_name) AS manager FROM employee JOIN role ON employee.role_id = role.id JOIN department ON role.department_id = department.id LEFT JOIN employee as managers ON managers.id = employee.manager_id;';
+    const query = 'SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name AS department, role.salary, concat(managers.first_name, \' \', managers.last_name) AS manager FROM employee JOIN role ON employee.role_id = role.id JOIN department ON role.department_id = department.id LEFT JOIN employee AS managers ON managers.id = employee.manager_id;';
     db.query(query, (err, results) => {
         if (err) throw err;
         console.table(results);
@@ -200,7 +202,7 @@ addEmployee = () => {
             const employees = results;
             let employeeNames = employees.map(employee => employee.first_name + ' ' + employee.last_name);
 
-            // Add none
+            // Add no manager
             employeeNames.push("No manager");
 
             inquirer.prompt([
@@ -215,7 +217,7 @@ addEmployee = () => {
                             console.log("Please enter the employee's first name.");
                         }
                     }
-                }, 
+                },
                 {
                     name: "lastName",
                     type: "input",
@@ -266,7 +268,7 @@ addEmployee = () => {
                     managerId = null;
                 } else {
                     managerId = employees
-                        .filter(employee => (employee.first_name + ' ' + employee.last_name) === answer.manager) 
+                        .filter(employee => (employee.first_name + ' ' + employee.last_name) === answer.manager)
                         .map(manager => manager.id);
                 }
 
@@ -280,19 +282,62 @@ addEmployee = () => {
     });
 }
 
+// Function to update an employee's role
 updateRole = () => {
-    inquirer.prompt([
-        {
-            name: "update",
-            type: "input",
-            message: "Would you like to update an employee's role?",
-            validate: (value) => {
-                if (value) {
-                    return true;
-                } else {
-                    console.log("Please enter the new role.");
+
+    // Query to get all the employees
+    db.query('SELECT id, first_name, last_name FROM employee', (err, results) => {
+        if (err) throw err;
+        const employees = results;
+        let employeeNames = employees.map(employee => employee.first_name + ' ' + employee.last_name);
+
+        // Query to get all the roles
+        db.query('SELECT id, title FROM role', (err, results) => {
+            if (err) throw err;
+            const roles = results;
+            const roleNames = roles.map(role => role.title);
+
+            inquirer.prompt([
+                {
+                    name: "employee",
+                    type: "list",
+                    message: "Which employee would you like to update?",
+                    choices: employeeNames,
+                    validate: (value) => {
+                        if (value) {
+                            return true;
+                        } else {
+                            console.log("Please select an employee to update.");
+                        }
+                    }
+                },
+                {
+                    name: "role",
+                    type: "list",
+                    message: "What is this employee's new role?",
+                    choices: roleNames,
+                    validate: (value) => {
+                        if (value) {
+                            return true;
+                        } else {
+                            console.log("Please select a role for the employee.");
+                        }
+                    }
                 }
-            }
-        }
-    ]).then(answer)
+            ]).then(answer => {
+                const query = "UPDATE employee SET role_id = ? WHERE id = ?";
+                const employeeId = employees
+                    .filter(employee => (employee.first_name + ' ' + employee.last_name) === answer.employee)
+                    .map(employee => employee.id);
+                const roleId = roles
+                    .filter(role => role.title === answer.role)
+                    .map(role => role.id);
+                db.query(query, [roleId, employeeId], (err, results) => {
+                    if (err) throw err;
+                    console.log("Successfully added new employee.");
+                    init();
+                });
+            });
+        });
+    });
 }

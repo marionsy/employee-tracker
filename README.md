@@ -21,8 +21,8 @@
   ## Screenshot
   
   This screenshot shows the the application, where users will select one of the following choices.
-  
-  <img width="365" alt="Screen Shot 2022-09-13 at 12 22 54 PM" src="https://user-images.githubusercontent.com/105673031/189991309-     f2e0b56f-0a25-4b38-96eb-f0a39d2b06ee.png">
+
+<img width="365" alt="Screen Shot 2022-09-13 at 12 22 54 PM" src="https://user-images.githubusercontent.com/105673031/190000595-b84d4aab-614c-40d9-b7fb-57dd581f2c61.png">
 
   
   ## Video Demo
